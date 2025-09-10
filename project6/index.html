@@ -1,1 +1,323 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Matching Game</title>
+        <style>
+            body {
+                background-color: #000;
+                color: #fff;
+                font-family: sans-serif;
+            }
+            .hidden {
+                display: none;
+            }
+            #token_container {
+                width: 400px;
+            }
+            #token_container img {
+                width: 100px;
+            }
+            #difficultyselect{
+                display: block;
+                margin: 10px 0;
+                font-size: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Matching Game</h1>
 
+        <label for="graphics_select">Choose Graphics Set:</label>
+        <select id="graphics_select">
+            <option value = "pokemon">Pokemon</option>
+            <option value="animals">Animals</option>
+            <option value="disney">Disney</option>
+        </select>
+        <div id="panel_start">
+            <p>Play a fast-paced game of memory and try and beat your best time</p>
+            <button id="button_playgame">Play the Game</button>
+            
+            <label for="difficultyselect">Choose Difficulty:</label>
+            <select id="difficultyselect">
+                <option value="easy">Easy (3x4)</option>
+                <option value="medium">Medium (4x5)</option>
+                <option value="hard">Hard (5x6)</option>
+            </select>
+        </div>
+
+        <div id="panel_gameplaying" class="hidden">
+            <div>Time elapsed: <span id="time_elapsed">0</span></div>
+            <div id="token_container"></div>
+        </div>
+
+        <div id="panel_gameover" class="hidden">
+            <div>Your time: <span id="time_yourtime">0</span></div>
+            <div>Best time: <span id="time_besttime">0</span></div>
+        
+            <button id="button_playagain">Play Again</button>
+
+            <form id="highscore_form">
+                <label for="player_name">New High Score! Enter your name: </label>
+                <input type="text" id ="player_name" required>
+                <button type="submit">Save Score</button>
+            </form>
+
+            <h3>Leaderboard (Top 3 Scores)</h3>
+            <ol id="leaderboard"></ol>
+        </div>
+
+        <script>
+            // DOM references
+            //select difficulty
+            const difficultyselect = document.getElementById('difficultyselect');
+            
+            const panel_start = document.getElementById('panel_start');
+            const panel_gameplaying = document.getElementById('panel_gameplaying');
+            const panel_gameover = document.getElementById('panel_gameover');
+            const button_playgame = document.getElementById('button_playgame');
+            const time_elapsed = document.getElementById('time_elapsed');
+            const token_container = document.getElementById('token_container');
+            const button_playagain = document.getElementById('button_playagain');
+            const time_yourtime = document.getElementById('time_yourtime');
+            const time_besttime = document.getElementById('time_besttime');
+            const leaderboard = document.getElementById('leaderboard');
+            const highscore_form = document.getElementById('highscore_form');
+            const player_name = document.getElementById('player_name');
+            const correctsound = new Audio('images/correct.wav');
+            const wrongsound = new Audio('images/wrong.wav');
+
+            // set up global variables to keep track of what the user has clicked on 
+            let token1 = false;
+            let token2 = false;
+            let matchedPairs = 0;
+            let elapsed = 0;
+            let timerinterval;
+
+            let besttime = localStorage.getItem('besttime');
+            besttime = besttime ? parseInt(besttime) : null;
+            time_besttime.textContent = besttime !== null ? besttime : "N/A";
+
+            let difficultysettings = {
+                easy: {rows: 3, cols: 4, pairs: 6},
+                medium: {rows: 4, cols: 5, pairs: 10},
+                hard: {rows: 5, cols: 6, pairs: 14}
+            };
+
+            let leaderboardData = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            function updateLeaderboard(){
+                leaderboard.innerHTML = "";
+                leaderboardData.slice(0,3).forEach((entry, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${entry.name}: ${entry.time} sec`;
+                    leaderboard.appendChild(li);
+                });
+            }
+            function checkHighScore(finalTime){
+                if (!Array.isArray(leaderboardData)) {
+                    leaderboardData = [];
+                }
+                if(leaderboardData.length < 3){
+                    highscore_form.classList.remove('hidden');
+                }
+                let worsttime = leaderboardData[leaderboardData.length-1].time;
+
+                if(finalTime < worsttime){
+                    highscore_form.classList.remove('hidden');
+                }
+                else{
+                    highscore_form.classList.add('hidden');
+
+                }
+            }
+
+            button_playagain.classList.add('hidden');
+
+            function shuffleArray(array){
+                for(let i=array.length - 1; i>0; i--){
+                    const j = Math.floor(Math.random() * (i+1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            highscore_form.onsubmit = function(event){
+                event.preventDefault();
+                const playername = player_name.value.trim();
+
+                if(playername){
+                    //add new score and sort leaderboard
+                    leaderboardData.push({name: playername, time: elapsed});
+                    leaderboardData.sort((a,b) => a.time - b.time);
+                    leaderboardData = leaderboardData.slice(0,3);
+
+                    localStorage.setItem('leaderboard', JSON.stringify(leaderboardData));
+
+                    updateLeaderboard();
+
+                    highscore_form.classList.add('hidden');
+                }
+            };
+
+            button_playagain.onclick = function(){
+                panel_gameover.classList.add('hidden');
+                panel_start.classList.remove('hidden');
+                button_playagain.classList.add('hidden');
+            }
+
+            // click the button to start the game
+            button_playgame.onclick = function(event) {
+                let selecteddiff = difficultyselect.value;
+                let {rows, cols, pairs} = difficultysettings[selecteddiff];
+                startgame(rows, cols, pairs);
+            };
+            const graphicsSets = {
+                    pokemon: ['snorlax.png', 'electrabuzz.png', 'chansey.png', 'oddish.png',
+                        'pikachu.png', 'paras.png', 'arcanine.png', 'ponita.png',
+                        'venonat.png', 'eggsecute.png', 'machop.png', 'pidgey.png',
+                        'psyduck.png', 'tauros.png', 'vulpix.png', 'gloom.png',
+                        'krabby.png', 'butterfree.png', 'bulbasaur.png', 'clefairy.png',
+                        'koffing.png', 'goldeen.png', 'magikarp.png', 'beedrill.png',
+                        'lapras.png', 'meowth.png', 'ekans.png', 'jigglypuff.png',
+                        'horsea.png', 'polywog.png', 'sandshrew.png', 'rattata.png',
+                        'gengar.png', 'eevee.png', 'bellsprout.png', 'squirtle.png',
+                        'seel.png', 'caterpie.png'],
+                    animals: ['cow.png', 'cat.png', 'deer.png', 'rat.png', 'parrot.png',
+                            'quokka.png', 'puffin.png', 'seal.png', ],
+                    disney: ['tigger.png', 'dumbo.png', 'donaldduck.png', 'goofy.gif', 'minnie.png', 'snowwhite.png', 'bambi.png', 'pluto.png']
+            };
+            const graphicsSelect = document.getElementById('graphics_select');
+
+            let selectedGraphicsSet = localStorage.getItem('graphicsSet') || 'pokemon';
+            graphicsSelect.value = selectedGraphicsSet;
+
+            graphicsSelect.addEventListener('change', function () {
+                selectedGraphicsSet = graphicsSelect.value;
+                localStorage.setItem('graphicsSet', selectedGraphicsSet);
+            });
+
+            function startgame(rows, cols, paircount){
+                selectedGraphicsSet = graphicsSelect.value;
+                let assets = [...graphicsSets[selectedGraphicsSet]];
+
+                // given: an array of image asset paths
+
+                panel_start.classList.add('hidden');
+                panel_gameplaying.classList.remove('hidden');
+                token_container.innerHTML = "";
+                matchedPairs = 0;
+                elapsed = 0;
+                time_elapsed.textContent = elapsed;
+
+                if(timerinterval) clearInterval(timerinterval);
+                timerinterval = setInterval(() =>{
+                    elapsed++;
+                    time_elapsed.textContent = elapsed;
+                }, 1000);
+
+                token_container.style.display = 'grid';
+                token_container.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+                token_container.style.gap = '10px';
+
+                // create the tiles for our game
+                // select 6 images at random and put them into a new array
+                const selectedImages = [];
+
+                for (let i = 0; i < paircount; i++) {
+                    let index = parseInt( Math.random() * assets.length );
+                    selectedImages.push( assets[index] );
+                    selectedImages.push( assets[index] );
+                    assets.splice(index, 1);
+                }
+
+                shuffleArray(selectedImages);
+
+                // create our tokens that the user can click on
+                for (let image of selectedImages) {
+                    const el = document.createElement('img');
+                    el.dataset.secretimage = `images/${selectedGraphicsSet}/${image}`;
+                    el.src = 'images/pokeball.png';
+                    token_container.appendChild(el);
+
+                    el.onclick = function(event) {
+
+                        if(token1 === el) return;
+                        if(token1 && token2) return;
+                        // is this the user's first click?
+                        if (token1 == false) {
+                            el.src = el.dataset.secretimage;
+                            token1 = el;   
+               
+                        }
+
+                        // is this the second click?
+                        else {
+                            // are they the same?
+                            token2 = el;
+                            el.src = el.dataset.secretimage;
+
+                            if (token1.dataset.secretimage == token2.dataset.secretimage) {
+
+                                correctsound.play();
+                                // match!
+                                token1 = false;
+                                token2 = false;
+                                matchedPairs++;
+
+
+                                if(matchedPairs === paircount){
+                                    setTimeout(() => {
+                                        panel_gameplaying.classList.add('hidden');
+                                        panel_gameover.classList.remove('hidden');
+
+                                        clearInterval(timerinterval);
+                                        time_yourtime.textContent = elapsed;
+
+                                        if(besttime === null || elapsed < besttime){
+                                            besttime = elapsed;
+                                            localStorage.setItem('besttime', besttime);
+                                            time_besttime.textContent = besttime;
+                                        }
+
+                                        checkHighScore(elapsed);
+                                        updateLeaderboard();
+                                        
+                                        button_playagain.classList.remove('hidden');
+                                    }, 500);
+                                    panel_gameover.classList.add('hidden');
+                                }
+                            }
+                            else {
+                                setTimeout( function() {
+                                    wrongsound.play();
+                                    // the user didn't match :(
+                                    token1.src = 'images/pokeball.png';
+                                    token2.src = 'images/pokeball.png';
+
+                                    token1 = false;
+                                    token2 = false;                                
+                                }, 500);
+                            }
+
+                            // reset the tokens to allow for a second click
+                            
+
+                        }
+
+                        //event.currentTarget.src = event.currentTarget.dataset.secretImage;
+                    }
+                }
+
+            }
+
+
+
+
+            /* TO-DO:
+                - generate interface (start screen, play screen, game over screen)
+                - randomly "deal" a series of tokens, face down
+                - allow the user to click on a token to reveal its face
+                - allow the user to click on a second token to check if the tokens are the same
+            */
+            
+        </script>
+    </body>
+</html>
