@@ -1,1 +1,116 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Design Your own Hogwarts!</title>
+    <style type="text/css">
+      body{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      h1{
+        margin-bottom: 20px;
+      }
 
+      #container{
+        display: flex;
+        gap: 3%;
+        width: 100%;
+        margin-left:5%; 
+      }
+      #left{
+        border: 5px solid black;
+        display: flex;
+        flex-wrap: wrap;
+        width: 320px;
+        height: 320px;
+      }
+      .map-tile{
+        width: 32px;
+        height: 32px;
+        border: .5px solid rgb(211, 211, 211);
+        box-sizing: border-box;
+      }
+
+      .map-tile:hover{
+        border: 3px solid blue;
+        cursor: pointer;
+      }
+
+      #tile img{
+        width: 32px;
+        height: 32px;
+        margin: 2px;
+        cursor: pointer;
+      }
+
+      #right{
+        width: 65%;
+        border: 5px solid black;
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .selected{
+        border: 3px solid blue;
+        opacity: 0.7;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <h1>Design Your Own Hogwarts!</h1>
+
+    <div id="container">
+
+    <div id="left"></div>
+    <div id="right">
+      <div id = "tile"></div>
+    </div>
+  </div>
+
+    <!-- load in the image array file - this makes available a new array of all image filenames that you can use for this project -->
+    <!-- Assets courtesy of Crawl Stone Soup: https://github.com/crawl/tiles -->
+    <script src="image_array.js"></script>
+
+    <!-- write your code here -->
+    <script>
+      const mapcontainer = document.getElementById("left");
+      const tile = document.getElementById("tile");
+      let selectedimgsrc = "";
+
+      for(let i=0; i<100; i++){
+        const div = document.createElement("div");
+        div.classList.add("map-tile");
+
+        div.addEventListener("click", () =>{
+          if(selectedimgsrc){
+            div.style.backgroundImage = `url(${selectedimgsrc})`;
+            div.style.backgroundSize = "cover";
+          }
+        })
+        mapcontainer.appendChild(div);
+      }
+
+      array_library.forEach((filename) => {
+        const img = document.createElement("img");
+        img.src = filename;
+        img.alt = filename;
+
+        img.addEventListener("click", () =>{
+          document.querySelectorAll("#tile img").forEach(img => img.classList.remove("selected"));
+          img.classList.add("selected");
+          selectedimgsrc = img.src;
+
+        })
+
+        tile.appendChild(img);
+        
+      });
+
+
+
+    </script>
+
+  </body>
+</html>
