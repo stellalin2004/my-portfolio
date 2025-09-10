@@ -1,1 +1,274 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gotta Catch 'em All</title>
+        <style>
+            #left {
+                width: 800px;
+                height: 600px;
+                float: left;
+                position: relative;
+            }
+            #results{
+                clear: left; /* Ensures it appears below the left div */
+                width: 200px; /* Match the left div width */
+                margin-top: 10px; /* Adds space between left div and results */
+            }
+            #background {
+                width: 100%;
+            }
+            .grass {
+                position: absolute;
+                z-index: 1;
+            }
+            #grass1 {
+                bottom: 0px;
+                left: 0px;
+            }
+            #grass2 {
+                bottom: 0px;
+                left: 275px;
+            }
+            #grass3 {
+                bottom: 0px;
+                right: 0px;
+            }
+            .grass:hover {
+                background-color: rgba(255, 255, 0, 0.5);
+            }
+            img {
+                transition: opacity 0.5s ease-in-out;
+            }
+          
+
+
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="left">
+                <!-- background + grasses -->
+                <img id="background" src="images/environment_forestbackground.png">
+                <img id="grass1" class="grass" src="images/grass.png">
+                <img id="grass2" class="grass" src="images/grass.png">
+                <img id="grass3" class="grass" src="images/grass.png">
+            </div>
+            <div id="right">
+                <!-- instructions & output (text) + play again button -->
+                <h1>Gotta Catch 'em All</h1>
+                <p id="instructions">Click on a patch of grass!</p>
+                <p>Pokeballs left: <span id="pokeballs_left">5</span></p>
+                <p>Pokemon caught: <span id="pokemon_caught">0</span></p>
+                <button id="button_playagain" style="display: none;">Play Again</button>
+                <button id="button_clearhistory" style = "display: none;">Clear History</button>
+            </div>
+            <div id="results"></div>
+        </div>
+
+        <script>
+            // define all DOM elements that we plan on using
+            const grass1 = document.getElementById('grass1');
+            const grass2 = document.getElementById('grass2');
+            const grass3 = document.getElementById('grass3');
+            const results = document.getElementById('results');
+            const pokeballs_left = document.getElementById('pokeballs_left');
+            const pokemon_caught = document.getElementById('pokemon_caught');
+            const button_playagain = document.getElementById('button_playagain');
+            const button_clearhistory = document.getElementById('button_clearhistory');
+            const instructions = document.getElementById('instructions');
+            
+            
+            // possible pokemon
+            const pokemon = [
+                {name:'Pikachu', image: 'images/pikachu.png'},
+                {name:'Bulbasaur', image:'images/bulbasaur.png'},
+                {name:'Charmander', image:'images/charmander.png'},
+                {name:'Eevee', image:'images/eevee.png'},
+                {name:'Squirtle', image:'images/squirtle.png'}
+            ]
+            let chosen = pokemon[Math.floor(Math.random() * pokemon.length) ];
+
+            // variables to keep track of game state
+            let pokeballsLeft = 5;
+            let pokemonCaught = 0;  
+            let pokemonCounts = { 'Pikachu': 0, 'Bulbasaur': 0, 'Charmander': 0, 'Eevee': 0, 'Squirtle': 0 };
+            let history = [];
+            
+            function setupRound() {
+                // Create the three possible outcomes
+                let options = [
+                    { type: "pokemon", ...pokemon[Math.floor(Math.random() * pokemon.length)] },
+                    { type: "pokeballs", image: "images/pokeballs.png" },
+                    { type: "empty" }
+                ];
+
+                // Shuffle the options to randomly assign them to the grass patches
+                grassOptions = options.sort(() => Math.random() - 0.5);
+            }
+
+
+
+            function updateResults(){
+                let heading = document.createElement("h3");
+                heading.innerText = "Results";
+                results.appendChild(heading);
+                results.innerHTML = "";
+                history.forEach(entry => {
+                let p = document.createElement("p");
+                p.innerText = entry;
+                results.appendChild(p);
+                });
+            }
+
+            // reset button 
+            button_playagain.onclick = function() {
+                // reset the grasses 
+                grass1.src = 'images/grass.png';
+                grass2.src = 'images/grass.png';
+                grass3.src = 'images/grass.png';
+
+                // hide the play again button
+                button_playagain.style.display = 'none';
+            }
+
+            let roundOver = false;
+
+                // work with grass1
+                function grassclick(grass, index) {
+
+                    if (!roundOver) {
+                        
+                        roundOver = true;
+                        
+                        results.style.display = 'none';
+                        instructions.style.display = 'block';
+                        button_clearhistory.style.display = 'none';
+
+                        // the user loses a pokeball
+                        pokeballsLeft -= 1;
+                        pokeballs_left.innerText = pokeballsLeft;
+
+                        [grass1, grass2, grass3].forEach((g, i) => {
+                            let item = grassOptions[i];
+
+                            if (item.type === "empty") {
+                                g.src = ""; // Remove the grass when nothing is found
+                            } else {
+                                g.src = item.image; // Show Pokémon or Pokéballs
+                            }
+
+                            // Fade out missed items
+                            g.style.opacity = i !== index ? "0.5" : "1";
+
+                            // Handle outcomes
+                            if (i === index) {
+                                if (item.type === "pokemon") {
+                                    pokemonCaught += 1;
+                                    pokemon_caught.innerText = pokemonCaught;
+                                    history.push(`${item.name} found!`);
+                                    pokemonCounts[item.name] += 1;
+                                } else if (item.type === "pokeballs") {
+                                    pokeballsLeft += 2;
+                                    pokeballs_left.innerText = pokeballsLeft;
+                                    history.push("Extra Pokéballs found!");
+                                } else if (item.type === "empty") {
+                                    history.push("Nothing found!");
+                                }
+                            }
+                        });
+                        /*
+                        let chosen = pokemon[Math.floor(Math.random() * pokemon.length)];
+                        let chosenImage = chosen.image; 
+
+                        // pick which option we should use
+                        let chance = Math.random(); // 0.0 - 1.0
+                        resultText = "";
+
+                        // 33% of a pokemon
+                        if (chance > 0.5) {
+                            grass.src = chosen.image;         
+                            pokemonCaught += 1;
+                            pokemon_caught.innerText = pokemonCaught;
+                            resultText = `${chosen.name} found!`;   
+                        }
+
+                        // 33% of 2 pokeballs 
+                        else if (chance >= 0.1) {
+                            grass.src = 'images/pokeballs.png';                            
+                            pokeballsLeft += 2;
+                            pokeballs_left.innerText = pokeballsLeft;
+                            resultText = `Extra pokeball found!`;   
+                        }
+
+                        // 33% of nothing
+                        else {
+                            grass.src = ''; 
+                            resultText = `Nothing found!`;                              
+                        }   
+*/
+                      updateResults(); 
+                        if (pokeballsLeft === 0) {
+                            roundOver = true;
+                            history.push("Game Over! No more Pokéballs left.");
+                            updateResults();
+                            button_playagain.style.display = 'none';
+                            button_clearhistory.style.display = 'block';
+                            instructions.style.display = 'none';
+                            results.style.display = 'block';
+                        }
+                        else{
+                        // show the reset button
+                            button_playagain.style.display = 'block';  
+                            button_clearhistory.style.display = 'none';
+                        }       
+                    }            
+                }
+                grass1.onclick = () => grassclick(grass1, 0);
+                grass2.onclick = () => grassclick(grass2, 1);
+                grass3.onclick = () => grassclick(grass3, 2);
+                /*
+                grass1.onclick = () => grassclick(grass1);
+                grass2.onclick = () => grassclick(grass2);
+                grass3.onclick = () => grassclick(grass3);
+                */
+            function resetGame() {
+                roundOver = false; // Allow new clicks
+                [grass1, grass2, grass3].forEach(g => {
+                    g.src = 'images/grass.png';
+                    g.style.opacity = "1";
+                });
+
+            /*    // Update UI
+                pokeballs_left.innerText = pokeballsLeft;
+                pokemon_caught.innerText = pokemonCaught;
+                grass1.src = 'images/grass.png'; // Reset grass images
+                grass2.src = 'images/grass.png';
+                grass3.src = 'images/grass.png';*/
+
+                // Hide the reset button again
+                button_playagain.style.display = 'none';
+                button_clearhistory.style.display = 'none';
+                instructions.style.display = 'block';
+                setupRound();
+            }
+
+            button_clearhistory.onclick = function(){
+                history = [];
+                pokeballsLeft = 5;
+                pokemonCaught = 0;
+                updateResults();
+                pokeballs_left.innerText = pokeballsLeft;
+                pokemon_caught.innerText = pokemonCaught;
+                resetGame();
+            }
+
+            // Attach the reset function to the "Play Again" button
+            button_playagain.onclick = resetGame;
+            setupRound();
+
+        </script>
+    </body>
+</html>
+
+
 
