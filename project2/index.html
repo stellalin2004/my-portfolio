@@ -1,1 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Assignment 02</title>
+        <style>
+            #container {
+                border: 5px solid black;
+                max-width: 100%;
+                width: 100vw;
+                height: 100vh;
+                position: relative;
+                margin: auto;
+            }
+            #background {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                z-index: 0;
+            }
+            #title {
+                position: absolute;
+                z-index: 1;
+                left: 20px;
+            }
+            #time {
+                position: absolute;
+                z-index: 1;
+                left: 20px;
+                top: 100px;
+                background-color: #ccc;
+                padding: 20px;
+                border-radius: 20px;
+            }
+            #body {
+                position: absolute;
+                z-index: 1;
+                bottom: 0px;
+                right: 0px;
+            }
+            #head {
+                position: absolute;
+                z-index: 1;
+                right: 70px;
+                bottom: 275px;
+            }
 
+        </style>
+    </head>
+    <body>
+
+        <div id="container">
+            
+            <h1 id="title">Everything is Awesome</h1>
+            <div id="time">The current time is HH:MM am</div>
+            <img id="body" src = "images/bodies/body1.png">
+            <img id="head" src ="images/heads/head1.png">
+            <img id="background" src ="images/backgrounds/afternoon.png">
+
+        </div>
+        <script>
+
+            let answer = prompt("Enter a number: ")
+            for(let i=1; i<answer; i++){
+                Math.random();
+            }
+
+            const words = ['Awesome', 'Fantastic', 'Fabulous', 'Superb', 'Perfect', 'Brilliant', 'Coming up Roses'];
+            const greeting = words[Math.floor(Math.random() * words.length) ];
+
+            let currentTime = new Date();
+            let hours = currentTime.getHours();
+            let minutes = currentTime.getMinutes();
+
+           // 12:00am - 5:59am: "Good Night!"
+           // 6:00am - 11:59am: "Good Morning!"
+           // 12:00pm - 5:59pm: "Good Afternoon!"
+           // 6:00pm - 11:59pm: "Good Evening!"
+            document.getElementById("title").textContent = `Everything is ${greeting}`;
+            let message;
+            let image;
+            if(hours < 6 && hours >= 0){
+                message = "Good Night!";
+                image = "images/backgrounds/night.png";
+                document.getElementById("title").style.color = "white";
+            }
+            else if(hours >= 6 && hours < 12){
+                message = "Good Morning!";
+                image = "images/backgrounds/morning.png";
+            }
+            else if(hours >= 12 && hours < 18){
+                message = "Good Afternoon";
+                image = "images/backgrounds/afternoon.png";
+            }
+            else {
+                message = "Good Evening!";
+                image = "images/backgrounds/evening.png";
+            }
+
+            let lucky = [];
+            while(lucky.length < 3){
+
+                let randnum = Math.floor(Math.random() * answer) + 1;
+
+                if(!lucky.includes(randnum)){
+                    lucky.push(randnum);
+                }
+            }
+            
+            document.getElementById("background").src = image;
+            
+            let head = [
+                "images/heads/head1.png", "images/heads/head2.png", 
+                "images/heads/head3.png", "images/heads/head4.png", 
+                "images/heads/head5.png", "images/heads/head6.png"];
+
+            let randomhead = head[Math.floor(Math.random() * head.length)];
+
+            let body = [
+                "images/bodies/body1.png", "images/bodies/body2.png",
+                "images/bodies/body3.png", "images/bodies/body4.png", 
+                "images/bodies/body5.png", "images/bodies/body6.png"];
+
+            let randombody = body[Math.floor(Math.random() * body.length)];
+                
+                    document.getElementById("title").textContent = `Everything is ${greeting}!`;
+                    let formattedTime = `${hours % 12 || 12}:${minutes < 10 ? '0' : ''}${minutes} ${hours < 12 ? 'AM' : 'PM'}`;
+                    document.getElementById("time").innerHTML = 
+                        `The current time is ${formattedTime} - ${message} <br> Your lucky numbers today are ${lucky.join(", ")}`;
+                    document.getElementById("body").src = randombody;
+                    document.getElementById("head").src = randomhead;
+                    document.getElementById("background").src = image;
+                
+                let boxColors = ['red', 'blue', 'green', 'purple', 'yellow', 'orange'];
+                let randomColor = boxColors[Math.floor(Math.random() * boxColors.length)];
+                document.getElementById("time").style.backgroundColor = randomColor;
+        </script>
+    </body>
+</html>
