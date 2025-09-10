@@ -52,9 +52,9 @@
             
             <h1 id="title">Everything is Awesome</h1>
             <div id="time">The current time is HH:MM am</div>
-            <img id="body" src = "images/bodies/body1.png">
-            <img id="head" src ="images/heads/head1.png">
-            <img id="background" src ="images/backgrounds/afternoon.png">
+            <img id="body" src="../images/body1.png">
+            <img id="head" src="../images/head1.png">
+            <img id="background" src="../images/afternoon.png">
 
         </div>
         <script>
@@ -80,20 +80,20 @@
             let image;
             if(hours < 6 && hours >= 0){
                 message = "Good Night!";
-                image = "images/backgrounds/night.png";
+                image = "../images/backgrounds/night.png";
                 document.getElementById("title").style.color = "white";
             }
             else if(hours >= 6 && hours < 12){
                 message = "Good Morning!";
-                image = "images/backgrounds/morning.png";
+                image = "../images/backgrounds/morning.png";
             }
             else if(hours >= 12 && hours < 18){
                 message = "Good Afternoon";
-                image = "images/backgrounds/afternoon.png";
+                image = "../images/backgrounds/afternoon.png";
             }
             else {
                 message = "Good Evening!";
-                image = "images/backgrounds/evening.png";
+                image = "../images/backgrounds/evening.png";
             }
 
             let lucky = [];
@@ -109,16 +109,16 @@
             document.getElementById("background").src = image;
             
             let head = [
-                "images/heads/head1.png", "images/heads/head2.png", 
-                "images/heads/head3.png", "images/heads/head4.png", 
-                "images/heads/head5.png", "images/heads/head6.png"];
+                "images/heads/head1.png", "../images/heads/head2.png", 
+                "images/heads/head3.png", "../images/heads/head4.png", 
+                "images/heads/head5.png", "../images/heads/head6.png"];
 
             let randomhead = head[Math.floor(Math.random() * head.length)];
 
             let body = [
-                "images/bodies/body1.png", "images/bodies/body2.png",
-                "images/bodies/body3.png", "images/bodies/body4.png", 
-                "images/bodies/body5.png", "images/bodies/body6.png"];
+                "images/bodies/body1.png", "../images/bodies/body2.png",
+                "images/bodies/body3.png", "../images/bodies/body4.png", 
+                "images/bodies/body5.png", "../images/bodies/body6.png"];
 
             let randombody = body[Math.floor(Math.random() * body.length)];
                 
