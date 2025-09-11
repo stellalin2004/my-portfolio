@@ -18,7 +18,9 @@ body{
     text-align: center;
     color: white;
     
-    background: url("images/starrynight.jpg");
+    background: 
+        linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05)),
+        url("images/starrynight.jpg") no-repeat center center fixed;
     background-size: cover;
 }
 
@@ -77,4 +79,5 @@ footer{
     padding-top: 20px;
 
 }
+
 
