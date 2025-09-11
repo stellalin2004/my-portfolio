@@ -1,0 +1,104 @@
+#wrap{
+    /* Standard size */
+    /* Center the block */
+    margin:0 auto;
+}
+body{
+    margin: 40px;
+    border : none;
+    background: linear-gradient(to bottom,rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2)), url('../images/greatwall.jpg');
+    background-repeat : no-repeat;
+    background-position : center center;
+    background-attachment: fixed;
+    background-size : cover;
+
+}
+.nav ul{
+    list-style : none;
+    padding : 0px;
+    margin: 0;
+    text-align: right;
+    font-size: 12px;
+    line-height: 1;
+    color: black;
+}
+.nav ul a:visited{
+    color : darkblue;
+}
+
+.nav ul a:focus{
+    color : royalblue;
+    outline-color: teal;
+}
+
+.nav ul a:hover{
+    color : white;
+}
+
+.nav ul a:active{
+    background : blueviolet;
+    color : white;
+}
+table td{
+    vertical-align: right;
+    border: none;
+}
+table{
+    border: none;
+}
+.nav h1{
+    margin-top: 0;
+    font-family: 'Lemon Milk';
+    text-align: center;
+}
+.nav ul a:link{
+    text-decoration : none;
+    font-family: 'Lemon Milk';
+}
+
+@font-face {
+    font-family: 'Lemon Milk';
+    src: url('../fonts/LEMONMILK-Regular.otf') format('opentype');
+}
+@font-face{
+    font-family: "Lemon Milk Light";
+    src: url('../fonts/LEMONMILK-Light.otf') format('opentype');
+}
+#people p{
+    font-family: 'Lemon Milk Light';
+    line-height: 0.5;
+    font-size: 13px;
+}
+#people h2{
+    line-height: 0;
+    font-size: 28px;
+}
+#people{
+    margin: 0 auto;
+    text-align: left;
+}
+#people td{
+    padding: 10px;
+}
+.head h1{
+    text-align: center;
+}
+.head td{
+    vertical-align: middle;
+}
+.navlink{
+    text-align: right;
+}
+#places h2{
+    line-height: 0;
+    font-size: 28px;
+}
+#places p{
+    font-family: 'Lemon Milk Light';
+    line-height: 0.5;
+    font-size: 13px;
+}
+#places td{
+    padding: 10px;
+}
+

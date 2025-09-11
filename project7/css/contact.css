@@ -1,0 +1,85 @@
+.container{
+    margin: 20px;
+    
+}
+body{
+    background-image : url(../images/beachsunset.jpg);
+    background-repeat : no-repeat;
+    background-position : center center;
+    background-attachment: fixed;
+    background-size : cover;
+}
+nav ul{
+    list-style : none;
+    padding:0px;
+    margin-top: 0px;
+    text-align: right;
+    font-size: 12px;
+    line-height: 1;
+    color: black;
+    font-family: 'Lemon Milk';
+}
+nav ul a:visited{
+    color : darkblue;
+}
+
+nav ul a:focus{
+    color : royalblue;
+    outline-color: teal;
+}
+
+nav ul a:hover{
+    color : blueviolet;
+}
+
+nav ul a:active{
+    background : blueviolet;
+    color : white;
+}
+.container table{
+    align-items: center;
+    border: none;
+    justify-content: center;
+}
+.container h1,
+.container h2{
+    font-family: 'Lemon Milk';
+}
+#head{
+    align-items: center;
+}
+#head h2{
+    font-size: 20px;
+    vertical-align: middle;
+}
+
+ul a:link{
+    text-decoration : none;
+    font-family: 'Lemon Milk';
+}
+
+@font-face {
+    font-family: 'Lemon Milk';
+    src: url('../fonts/LEMONMILK-Regular.otf') format('opentype');
+}
+@font-face{
+    font-family: "Lemon Milk Light";
+    src: url('../fonts/LEMONMILK-Light.otf') format('opentype');
+}
+.cameras td{
+    padding-top: 0%;
+    padding-bottom: 0%;
+    vertical-align: top;
+    text-align: center;
+    border: none;
+}
+td{
+    border: none;
+}
+h4{
+    font-family: 'Lemon Milk Light';
+    text-align: center;
+}
+p{
+    font-family: Century Gothic, CenturyGothic, AppleGothic, sans-serif;
+}
