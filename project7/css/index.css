@@ -5,12 +5,16 @@
     /* Center the block */
     margin:0 auto;
 }
+html, body {
+    height: 100%;   /* ensure they stretch */
+    margin: 0;      /* remove default margins */
+}
 body{
-    padding-top:20px;
-    min-height: 100vh;
-    background-color: rgb(250, 216, 221);  
+    padding-top:30px;
+    min-height: 100%;
     background: linear-gradient(to bottom, rgb(135, 179, 255), rgb(246, 248, 194));
     background-repeat: no-repeat;
+    background-attachment: fixed;
     background-size: cover;
 }
 ul{
@@ -68,6 +72,7 @@ nav ul a:link{
     font-family: "Lemon Milk Light";
     src: url('../fonts/LEMONMILK-Light.otf') format('opentype');
 }
+
 
 
 
