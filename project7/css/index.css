@@ -9,7 +9,8 @@ body{
     padding-top:20px;
     background-color: rgb(250, 216, 221);  
     background: linear-gradient(to bottom, rgb(135, 179, 255), rgb(246, 248, 194));
-  
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 ul{
     list-style : none;
@@ -66,4 +67,5 @@ nav ul a:link{
     font-family: "Lemon Milk Light";
     src: url('../fonts/LEMONMILK-Light.otf') format('opentype');
 }
+
 
